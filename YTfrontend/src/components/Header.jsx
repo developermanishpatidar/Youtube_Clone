@@ -1,0 +1,182 @@
+import React, { useState, useEffect, useRef } from "react";
+import { CiSearch } from "react-icons/ci";
+import { IoMdMic } from "react-icons/io";
+import { FaBell, FaVideo } from "react-icons/fa";
+import { RxHamburgerMenu } from "react-icons/rx";
+import { AiTwotonePrinter } from "react-icons/ai";
+import { CgProfile } from "react-icons/cg";
+import { IoCloseOutline } from "react-icons/io5";
+import { MdHome, MdSubscriptions, MdVideoLibrary, MdOutlineExplore, MdOutlineSlowMotionVideo } from "react-icons/md";
+import CallingVideos from "./CallingVideos";
+import Body from "./Body";
+import Search from "./Search";
+import Login from "./Login";
+
+function Header() {
+  let [activeCategory, setActiveCategory] = useState("All");
+
+  let respApi = CallingVideos();
+  let [filterdata,setfilterdata] = useState(respApi);
+  let [isVisible, setIsVisible] = useState(false);
+  let token = localStorage.getItem("token")
+  
+    useEffect(()=>{
+      if(respApi && respApi.length){
+        setfilterdata(respApi)
+      }
+    } , [respApi]);
+
+  function openModal() {
+    setIsVisible(true);
+  }
+
+  function closeModal() {
+    setIsVisible(false);
+  }
+
+  function handleCategoryClick(cat){
+    setActiveCategory(cat);
+    if(cat==='All'){
+      setfilterdata(respApi);
+    }
+    else{
+      let fcat = respApi.filter((v)=>v.category.toLowerCase()==cat.toLowerCase());
+      setfilterdata(fcat);
+    }
+  }
+
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const sidebarRef = useRef();
+
+  const toggleSidebar = () => setIsSidebarOpen((prev) => !prev);
+
+  const handleClickOutside = (e) => {
+    if (sidebarRef.current && !sidebarRef.current.contains(e.target)) {
+      setIsSidebarOpen(false);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  return (
+    <div className="flex min-h-screen bg-white font-[Roboto,Arial,sans-serif] relative">
+      {/* Sidebar */}
+      <aside
+        ref={sidebarRef}
+        className={`fixed top-0 left-0 h-full z-50 bg-white shadow-md transition-all duration-300 ease-in-out overflow-y-auto border-r border-gray-200 ${
+          isSidebarOpen ? "w-60" : "w-14"
+        }`}
+      >
+        <div className="h-14 flex items-center px-4 border-b border-gray-200">
+          {isSidebarOpen ? 
+          (
+            <div className="flex items-center gap-4">    
+            <RxHamburgerMenu className="w-6 h-6 text-black cursor-pointer" onClick={toggleSidebar} />
+            <img
+              src="https://upload.wikimedia.org/wikipedia/commons/b/b8/YouTube_Logo_2017.svg"
+              alt="YouTube"
+              className="h-5 w-auto"
+            />
+            </div>
+          ) : 
+          (
+            <RxHamburgerMenu className="w-6 h-6 text-black cursor-pointer" onClick={toggleSidebar} />
+          )}
+        </div>
+        <div className="pt-2 pb-4">
+          <SidebarItem icon={<MdHome size={24} />} label="Home" isSidebarOpen={isSidebarOpen} />
+          <SidebarItem icon={<MdOutlineSlowMotionVideo size={24} />} label="Shorts" isSidebarOpen={isSidebarOpen} />
+          <SidebarItem icon={<MdSubscriptions size={24} />} label="Subscriptions" isSidebarOpen={isSidebarOpen} />
+          <hr className="my-3 border-gray-300" />
+          <SidebarItem icon={<MdOutlineExplore size={24} />} label="Explore" isSidebarOpen={isSidebarOpen} />
+          <SidebarItem icon={<MdVideoLibrary size={24} />} label="Library" isSidebarOpen={isSidebarOpen} />
+        </div>
+      </aside>
+
+      {/* Main Content */}
+      <div className={`flex-1 w-full ml-14 ${isSidebarOpen ? 'bg-black/30 backdrop-invert backdrop-opacity-8' : 'bg-white'}`}>
+        {/* Header */}
+        <header className="h-26 w-full flex items-center justify-between px-0 py-2 bg-white sticky top-0 z-40 ">
+          {/* Left: Menu & Logo */}
+          <div className="flex flex-col w-full ">
+                <div className="h-14 w-full flex items-center justify-between px-4 py-2 bg-white sticky top-0 z-40 ">
+                      <div className="flex items-center gap-4">
+
+                        {!isSidebarOpen && (
+                          <img
+                            src="https://upload.wikimedia.org/wikipedia/commons/b/b8/YouTube_Logo_2017.svg"
+                            alt="YouTube"
+                            className="h-5 w-auto"
+                          />
+                        )}
+                      </div>
+                    
+                      <Search />
+                    
+                      {/* Right: Icons */}
+                      <div className="flex items-center gap-4">
+                        { token ? 
+                          <>
+                            <button className="flex justify-center items-center w-10 h-10 hover:bg-gray-200 rounded-full">
+                                <FaVideo className="w-5 h-5 text-gray-700 cursor-pointer " />
+                            </button>
+                            <button className="flex justify-center items-center w-10 h-10 hover:bg-gray-200 rounded-full">
+                                <FaBell className="w-5 h-5 text-gray-700 cursor-pointer hover:bg-gray-200" />
+                            </button>
+                            <button className="flex justify-center items-center w-10 h-10 hover:bg-gray-200 rounded-full">
+                                <CgProfile className="w-7 h-7 text-gray-700 cursor-pointer hover:bg-gray-200" />
+                            </button>
+                          </>
+                          :
+                          <>
+                          <button className="flex justify-center items-center w-10 h-10 hover:bg-gray-200 rounded-full">
+                              <AiTwotonePrinter className="w-5 h-5 text-gray-700 cursor-pointer " />
+                          </button>
+                          <button onClick={openModal}>SignIn</button>
+                          </>
+                        }
+                      </div>
+                </div>
+
+                <div className="h-12 w-full flex justify-start items-center px-4 sticky top-14">
+                  {["All", "Cars", "Home", "Study", "Music", "Sports"].map((category) => (
+                    <button
+                      key={category}
+                      onClick={() => handleCategoryClick(category)}
+                      className={`h-8 w-auto px-4 ml-2 rounded-xl text-base ${
+                        activeCategory === category
+                          ? "bg-black text-white font-semibold"
+                          : "bg-gray-100 text-black font-medium"
+                      }`}
+                    >
+                      {category}
+                    </button>
+                  ))}
+                </div>
+                    
+          </div>
+
+          
+
+        </header>
+
+        {/* Placeholder for main page content */}
+
+      </div>
+      <Body filterdata={filterdata}/>
+      <Login isVisible={isVisible} onClose={closeModal} />
+    </div>
+  );
+};
+
+const SidebarItem = ({ icon, label, isSidebarOpen }) => (
+  <div className="flex items-center gap-4 px-4 py-2 hover:bg-gray-100 cursor-pointer text-[15px] font-normal text-black">
+    {icon}
+    {isSidebarOpen && <span>{label}</span>}
+  </div>
+);
+
+export default Header;
