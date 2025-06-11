@@ -5,6 +5,7 @@ import { FaBell, FaVideo } from "react-icons/fa";
 import { RxHamburgerMenu } from "react-icons/rx";
 import { CgProfile } from "react-icons/cg";
 import { AiTwotonePrinter } from "react-icons/ai";
+import { RiLogoutCircleLine } from "react-icons/ri";
 import { IoCloseOutline } from "react-icons/io5";
 import { MdHome, MdSubscriptions, MdVideoLibrary, MdOutlineExplore, MdOutlineSlowMotionVideo } from "react-icons/md";
 import CallingVideos from "./CallingVideos";
@@ -56,6 +57,11 @@ function Header() {
   }
 
   function handlehome(){
+    navigate('/');
+  }
+
+  function handleLogout(){
+    localStorage.removeItem("token")
     navigate('/');
   }
 
@@ -171,6 +177,9 @@ function Header() {
                             </button>
                             <button className="flex justify-center items-center w-10 h-10 hover:bg-gray-200 rounded-full">
                                 <CgProfile className="w-7 h-7 text-gray-700 cursor-pointer hover:bg-gray-200" />
+                            </button>
+                            <button className="flex justify-center items-center w-10 h-10 hover:bg-gray-200 rounded-full" onClick={handleLogout}>
+                                <RiLogoutCircleLine className="w-7 h-7 text-gray-700 cursor-pointer hover:bg-gray-200" />
                             </button>
                           </>
                           :
