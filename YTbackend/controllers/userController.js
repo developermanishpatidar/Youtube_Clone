@@ -19,7 +19,7 @@ export async function register(req,res){
                     email,
                     password: bcrypt.hashSync(password, 10)
                 })
-                res.status(201).json({message: "user created successfully"})
+                res.status(201).json({message: "User created successfully"})
             }
         })
     }

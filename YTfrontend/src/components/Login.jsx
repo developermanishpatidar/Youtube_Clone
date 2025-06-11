@@ -20,12 +20,11 @@ function Login(props) {
     })
     const result = response.then( (data)=> data.json() )
     result.then((data)=>{
-        console.log(data, "data")
-      alert("Registered succesfully");
-      setUsername("")
-      setPassword("")
-      setEmail("")
-      props.onClose();
+        setUsername("")
+        setPassword("")
+        setEmail("")
+        alert(data.message)
+        props.onClose();
     })
     
   }
@@ -43,14 +42,21 @@ function Login(props) {
     })
     const result = response.then( (data)=> data.json() )
     result.then((data)=>{
-      alert("login successfully");
-      localStorage.setItem("token" , data.accessToken)
-      setUsername("")
-      setPassword("")
-      setEmail("")
-      props.onClose();
+      if(data.message) {
+        setUsername("")
+        setPassword("")
+        setEmail("")
+        props.onClose();
+        alert(data.message)
+      }else {
+        setUsername("")
+        setPassword("")
+        setEmail("")
+        props.onClose();
+        alert("login successfully");
+        localStorage.setItem("token" , data.accessToken)
+      }
     })
-
   }
 
   return (
