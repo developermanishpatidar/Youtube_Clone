@@ -13,5 +13,8 @@ cd YTbackend/YTfrontend
 # Install node modules
 npm install
 
-# Run the project
+# Backend Run the project
 npm start
+
+# Frontend Run the project
+npm run dev
