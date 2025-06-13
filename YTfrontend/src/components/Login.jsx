@@ -5,58 +5,71 @@ function Login(props) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isSignUp, setIsSignUp] = useState(true);
+  const [avatar, setAvatar] = useState("");
 
   function handleRegister() {
-    const response = fetch("http://localhost:8050/register", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        username,
-        email,
-        password
+    if(avatar && username && email && password) {
+        const response = fetch("http://localhost:8050/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          avatar,
+          username,
+          email,
+          password
+        })
       })
-    })
-    const result = response.then( (data)=> data.json() )
-    result.then((data)=>{
-        setUsername("")
-        setPassword("")
-        setEmail("")
-        alert(data.message)
-        props.onClose();
-    })
+      const result = response.then( (data)=> data.json() )
+      result.then((data)=>{
+          setAvatar("");
+          setUsername("")
+          setPassword("")
+          setEmail("")
+          alert(data.message)
+          props.onClose();
+      })
+    }else {
+      alert("All field's are required")
+    }
+    
     
   }
 
   function handleLogin() {
-    const response = fetch("http://localhost:8050/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        email,
-        password
+    if(email && password) {
+        const response = fetch("http://localhost:8050/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email,
+          password
+        })
+    })
+      const result = response.then( (data)=> data.json() )
+      result.then((data)=>{
+        if(data.message) {
+          setUsername("")
+          setPassword("")
+          setEmail("")
+          props.onClose();
+          alert(data.message)
+        }else {
+          setUsername("")
+          setPassword("")
+          setEmail("")
+          props.onClose();
+          alert("User login successfully");
+          localStorage.setItem("useravatar", data.user.avatar)
+          localStorage.setItem("token" , data.AccessToken)
+        }
       })
-    })
-    const result = response.then( (data)=> data.json() )
-    result.then((data)=>{
-      if(data.message) {
-        setUsername("")
-        setPassword("")
-        setEmail("")
-        props.onClose();
-        alert(data.message)
-      }else {
-        setUsername("")
-        setPassword("")
-        setEmail("")
-        props.onClose();
-        alert("login successfully");
-        localStorage.setItem("token" , data.accessToken)
-      }
-    })
+    }else {
+      alert("Email or password are required")
+    }
   }
 
   return (
@@ -97,9 +110,24 @@ function Login(props) {
             <h3 className="mb-4 text-xl font-medium text-gray-900 dark:text-white">
               Sign in to our platform
             </h3>
-            <form className="space-y-6" action="#">
+            <div className="space-y-6">
               {!isSignUp && (
                 <div>
+                  <div className="mt-4">
+                    <label
+                      htmlFor="image_url"
+                      className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                    >
+                    Paste Avatar Url
+                  </label>
+                    <input
+                      type="text"
+                      placeholder="Paste image URL"
+                      value={avatar}
+                      onChange={(e) => setAvatar(e.target.value)}
+                      className="mb-3 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                    />
+                  </div>
                   <label
                     htmlFor="username"
                     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
@@ -154,31 +182,6 @@ function Login(props) {
                   onChange={(e) => setPassword(e.target.value)}
                 />
               </div>
-              <div className="flex justify-between">
-                <div className="flex items-start">
-                  <div className="flex items-center h-5">
-                    <input
-                      id="remember"
-                      type="checkbox"
-                      value=""
-                      className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-600 dark:border-gray-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800"
-                      required
-                    />
-                  </div>
-                  <label
-                    htmlFor="remember"
-                    className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-                  >
-                    Remember me
-                  </label>
-                </div>
-                <a
-                  href="#"
-                  className="text-sm text-blue-700 hover:underline dark:text-blue-500"
-                >
-                  Lost Password?
-                </a>
-              </div>
               <button
                 type="submit"
                 className="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
@@ -211,7 +214,7 @@ function Login(props) {
                 </a>
               </div>
             }
-            </form>
+            </div>
           </div>
         </div>
       </div>

@@ -4,12 +4,12 @@ import { seedCommentDB, seedVideoDB } from './seedData.js';
 import cors from 'cors';
 import { videoRoutes } from './routes/videoRoutes.js';
 import { userRoutes } from './routes/userRoutes.js';
+import { PORT, MONGODB_URL } from './config/server.js';
 
 //defining the app
 const app = express();
 
 //defining the port and sending the connected response
-const PORT = 8050;
 app.listen(PORT, ()=>{
     console.log(`Server Connected at PORT: ${PORT}`);
 });
@@ -17,7 +17,7 @@ app.listen(PORT, ()=>{
 
 //'youtube' is the name of the database created in mongodb for your app and the IP address refers to your local machine aka your Laptop
 //connect method returns you a promise
-mongoose.connect('mongodb://127.0.0.1:27017/youtubeapp')
+mongoose.connect(`${MONGODB_URL}youtubeapp`)
 .then(()=>{
     console.log("DB Connected");
 })

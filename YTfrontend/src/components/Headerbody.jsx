@@ -4,8 +4,9 @@ import { IoMdMic } from "react-icons/io";
 import { FaBell, FaVideo } from "react-icons/fa";
 import { RxHamburgerMenu } from "react-icons/rx";
 import { CgProfile } from "react-icons/cg";
-import { AiTwotonePrinter } from "react-icons/ai";
-import { RiLogoutCircleLine } from "react-icons/ri";
+import { LuPlus } from "react-icons/lu";
+import { LiaSignOutAltSolid } from "react-icons/lia";
+import { ImProfile } from "react-icons/im";
 import { IoCloseOutline } from "react-icons/io5";
 import { MdHome, MdSubscriptions, MdVideoLibrary, MdOutlineExplore, MdOutlineSlowMotionVideo } from "react-icons/md";
 import Videodetail from "./Videodetail";
@@ -19,7 +20,10 @@ function Headerbody() {
 
   let [searchText, setSearchText] = useState("");
   let [isVisible, setIsVisible] = useState(false);
+  let [showProfileMenu, setShowProfileMenu] = useState(false);
+  let [showCreateMenu, setshowCreateMenu] = useState(false);
   let token = localStorage.getItem("token")
+  let useravatar = localStorage.getItem("useravatar");
 
 
   function handleVideoSearch(searchText){
@@ -27,8 +31,18 @@ function Headerbody() {
     navigate(`/search?q=${encodeURIComponent(searchText)}`);
   }
 
+  function handleProfilewindow(){
+    setShowProfileMenu((prev) => !prev);
+  }
+
+  function handleCreateWindow(){
+    setshowCreateMenu((prev) => !prev);
+  }
+
   function handleLogout(){
+    setShowProfileMenu(false);
     localStorage.removeItem("token")
+    localStorage.removeItem("useravatar");
     navigate('/');
   }
 
@@ -151,25 +165,28 @@ function Headerbody() {
                       <div className="flex items-center gap-4">
                         { token ? 
                           <>
-                            <button className="flex justify-center items-center w-10 h-10 hover:bg-gray-200 rounded-full">
-                                <FaVideo className="w-5 h-5 text-gray-700 cursor-pointer " />
+                            <button onClick={handleCreateWindow} className="flex justify-center items-center cursor-pointer w-26 h-10 bg-gray-100 hover:bg-gray-200 rounded-4xl">
+                              <LuPlus className="mr-2"/> Create
                             </button>
+                            {showCreateMenu && <div className="h-20 w-40 flex flex-col justify-start items-center bg-gray-100 absolute top-14 right-18 rounded-2xl shadow">
+                              <button className="h-10 w-40 m-2 flex justify-center items-center cursor-pointer hover:bg-gray-200">Create Channel</button></div>}
+
                             <button className="flex justify-center items-center w-10 h-10 hover:bg-gray-200 rounded-full">
                                 <FaBell className="w-5 h-5 text-gray-700 cursor-pointer hover:bg-gray-200" />
                             </button>
                             <button className="flex justify-center items-center w-10 h-10 hover:bg-gray-200 rounded-full">
-                                <CgProfile className="w-7 h-7 text-gray-700 cursor-pointer hover:bg-gray-200" />
+                                <img src={useravatar} onClick={handleProfilewindow} className="w-7 h-7 rounded-full text-gray-700 cursor-pointer hover:bg-gray-200" />
                             </button>
-                            <button className="flex justify-center items-center w-10 h-10 hover:bg-gray-200 rounded-full" onClick={handleLogout}>
-                                <RiLogoutCircleLine className="w-7 h-7 text-gray-700 cursor-pointer hover:bg-gray-200" />
-                            </button>
+                            {showProfileMenu && <div className="h-30 w-30 flex flex-col justify-start items-center  bg-gray-100 absolute top-14 right-4 rounded-2xl shadow">
+                            <button className="h-10 w-30 m-2 flex justify-center items-center cursor-pointer hover:bg-gray-200"><ImProfile className="w-7 h-7 text-gray-700 m-1" />Profile</button>
+                            <button onClick={handleLogout} className="h-10 w-30 m-2 flex justify-center items-center cursor-pointer hover:bg-gray-200"><LiaSignOutAltSolid className="w-7 h-7 text-gray-700 m-1" />SignOut</button>
+                            </div>}
                           </>
                           :
                           <>
-                          <button className="flex justify-center items-center w-10 h-10 hover:bg-gray-200 rounded-full">
-                              <AiTwotonePrinter className="w-5 h-5 text-gray-700 cursor-pointer " />
-                          </button>
-                          <button onClick={openModal}>SignIn</button>
+                            <button onClick={openModal} className="p-2 w-24 h-10 font-semibold text-sm text-blue-600 border border-gray-200 flex justify-center items-center hover:bg-blue-200 rounded-3xl">
+                                <CgProfile className="m-1 w-5 h-5 cursor-pointer" /> Sign in
+                            </button>
                           </>
                         }
                       </div>

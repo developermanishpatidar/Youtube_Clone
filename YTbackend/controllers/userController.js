@@ -1,13 +1,14 @@
 import UserModel from "../models/userSchema.js";
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import { JWT_SECRET_KEY } from '../config/server.js'
 
 
 
 //User registration
 export async function register(req,res){
     try{
-        let {username,email,password} = req.body;
+        let {avatar,username,email,password} = req.body;
         UserModel.findOne({email})
         .then((data)=>{
             if(data){
@@ -15,6 +16,7 @@ export async function register(req,res){
             }
             else{
                 UserModel.create({
+                    avatar,
                     username,
                     email,
                     password: bcrypt.hashSync(password, 10)
@@ -41,14 +43,15 @@ export async function login(req,res){
                 return res.status(403).json({message:"Wrong credentials"})
             }
 
-            const token = jwt.sign({data}, 'secretKey' , {expiresIn:'60m'});
+            const token = jwt.sign({data}, JWT_SECRET_KEY , {expiresIn:'60m'});
 
             return res.status(200).json({
                 user : {
+                    avatar:data.avatar,
                     email: data.email,
                     username: data.username
                 },
-                accessToken: token
+                AccessToken: token
             })
         })
     }
